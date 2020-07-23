@@ -55,5 +55,18 @@ function run(callback){
     return outputPromise;
 }
 
+
+function install(cb) {
+    var npm = require("npm");
+    npmConfig = {};
+
+    npm.load(npmConfig, function (er) {
+        if (er) return cb(er);
+        npm.commands.install([], function (er, data) { cb(er); });
+        npm.on("log", function (message) { console.log(message); });
+    });
+}
+
+module.exports.bootstrap = series(install, compile);
 module.exports.buildAndRun = series(compile, run);
 module.exports.default = series(compile);
