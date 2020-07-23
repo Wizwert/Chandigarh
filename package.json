@@ -1,0 +1,36 @@
+{
+  "name": "chandigarh",
+  "version": "1.0.0",
+  "description": "A collection of Scripts for Data Mining Related to Chandigarh furniture",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "build": "gulp",
+    "run": "node ./dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Wizwert/Chandigarh.git"
+  },
+  "author": "Will Rusinko (william.rusinko@gmail.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Wizwert/Chandigarh/issues"
+  },
+  "homepage": "https://github.com/Wizwert/Chandigarh#readme",
+  "dependencies": {
+    "@types/puppeteer": "^3.0.1",
+    "bufferutil": "^4.0.1",
+    "puppeteer": "^5.2.1",
+    "utf-8-validate": "^5.0.2"
+  },
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-typescript": "^6.0.0-alpha.1",
+    "merge2": "^1.4.1",
+    "rimraf": "^3.0.2",
+    "typescript": "^3.9.7"
+  }
+}
