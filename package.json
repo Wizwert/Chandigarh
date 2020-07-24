@@ -3,11 +3,7 @@
   "version": "1.0.0",
   "description": "A collection of Scripts for Data Mining Related to Chandigarh furniture",
   "main": "index.js",
-  "scripts": {
-    "test": "test",
-    "build": "gulp",
-    "run": "node ./dist/index.js"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Wizwert/Chandigarh.git"
@@ -19,8 +15,13 @@
   },
   "homepage": "https://github.com/Wizwert/Chandigarh#readme",
   "dependencies": {
+    "@types/gulp": "^4.0.6",
+    "@types/gulp-sourcemaps": "0.0.32",
+    "@types/merge2": "^1.3.0",
     "@types/puppeteer": "^3.0.1",
+    "@types/rimraf": "^3.0.0",
     "bufferutil": "^4.0.1",
+    "googleapis": "^39.2.0",
     "puppeteer": "^5.2.1",
     "utf-8-validate": "^5.0.2"
   },
@@ -32,6 +33,7 @@
     "merge2": "^1.4.1",
     "npm": "^6.14.7",
     "rimraf": "^3.0.2",
+    "ts-node": "^8.10.2",
     "typescript": "^3.9.7"
   }
 }
