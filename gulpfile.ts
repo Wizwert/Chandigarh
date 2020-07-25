@@ -51,11 +51,15 @@ function runCrawl(callback: (error?: any) => void){
   run(callback, "crawl");
 }
 
+function readUrls(callback: (error?: any) => void){
+  run(callback, "readUrls");
+}
+
 function run(callback: (error?: any) => void, command: string){
     const main = require("./dist/index");
     
     const functionToRun = main[command];
-    
+    console.log(functionToRun);
     const outputPromise = functionToRun(callback);
 
     return outputPromise;
@@ -77,5 +81,5 @@ const bootstrap = series(install, runCompile);
 const build = series(runCompile);
 const crawl = series(runCompile, runCrawl);
 
-export { bootstrap, build, crawl };
+export { bootstrap, build, crawl, readUrls };
 export default build;
