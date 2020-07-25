@@ -48,18 +48,18 @@ function babelify(js: stream.Readable) {
 }
 
 function runCrawl(callback: (error?: any) => void){
-  run(callback, "crawl");
+  return run(callback, "crawl");
 }
 
 function readUrls(callback: (error?: any) => void){
-  run(callback, "readUrls");
+  return run(callback, "readUrls");
 }
 
 function run(callback: (error?: any) => void, command: string){
     const main = require("./dist/index");
     
     const functionToRun = main[command];
-    console.log(functionToRun);
+    
     const outputPromise = functionToRun(callback);
 
     return outputPromise;
@@ -80,6 +80,7 @@ function install(cb: (error?: any) => void) {
 const bootstrap = series(install, runCompile);
 const build = series(runCompile);
 const crawl = series(runCompile, runCrawl);
+const read = series(runCompile, readUrls);
 
-export { bootstrap, build, crawl, readUrls };
+export { bootstrap, build, crawl, read };
 export default build;

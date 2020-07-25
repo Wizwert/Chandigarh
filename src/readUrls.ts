@@ -51,7 +51,7 @@ const getNewToken = (oAuth2Client: OAuth2Client, callback: (client: OAuth2Client
         rl.close();
         oAuth2Client.getToken(code, (err, token) => {
             if (err) return console.error('Error while trying to retrieve access token', err);
-            if(!token) return handleError()
+            if(!token) return console.error('No token');
             oAuth2Client.setCredentials(token);
             // Store the token to disk for later program executions
             fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
@@ -68,16 +68,17 @@ const readUrls = (callback: (error?: any) => void) => {
     fs.readFile('credentials.json', (err, content) => {
         if (err) return handleError(callback, 'Error loading client secret file:', err);
         // Authorize a client with credentials, then call the Google Sheets API.
-        console.log(content);
+        
         authorize(JSON.parse(content.toString()), (client: OAuth2Client) => readSheet(client, callback));
     });
 }
 
 const readSheet = (auth: OAuth2Client, callback: (error?: any) => void) => {
+    const headerMap = getHeaderLookup(auth, callback);
     const sheets = google.sheets({ version: 'v4', auth });
     sheets.spreadsheets.values.get({
-        spreadsheetId: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms',
-        range: 'Class Data!A2:E',
+        spreadsheetId: '1aCNSfTKJqLboNnajcaSosN05YVy2QhX3jr9UzqrFrLQ',
+        range: 'A2:P',
     }, (err, res) => {
         if (err) return handleError(callback, 'The API returned an error: ' + err);
         if (res == null) return handleError(callback, 'The API returned nothing');
@@ -85,10 +86,14 @@ const readSheet = (auth: OAuth2Client, callback: (error?: any) => void) => {
 
         const rows = res.data.values;
         if (rows.length) {
-            console.log('Name, Major:');
-            // Print columns A and E, which correspond to indices 0 and 4.
-            rows.map((row) => {
-                console.log(`${row[0]}, ${row[4]}`);
+            const linkColumnOrdinal = headerMap.get('Link');
+            if(!linkColumnOrdinal) return handleError(callback, 'Cannot find link column, did the name change?');
+            const uris = getCleanUrls(rows, linkColumnOrdinal);
+            const domains = uris.map(u => u.hostname);
+            
+            const distinctHostNames = domains.filter((host, index) => domains.indexOf(host) === index);
+            distinctHostNames.forEach(h => {
+                console.log(h);
             });
             callback();
         } else {
@@ -97,9 +102,51 @@ const readSheet = (auth: OAuth2Client, callback: (error?: any) => void) => {
     });
 }
 
-const handleError = (callback: (error?: any) => void, error: string, exception?: Error) => {
+const getHeaderLookup = (auth: OAuth2Client, callback: (error?: any) => void) : Map<string, number> => {
+    const headerMap = new Map<string, number>();
+    const sheets = google.sheets({ version: 'v4', auth });
+    sheets.spreadsheets.values.get({
+        spreadsheetId: '1aCNSfTKJqLboNnajcaSosN05YVy2QhX3jr9UzqrFrLQ',
+        range: 'A1:P1',
+        majorDimension: 'COLUMNS'
+    }, (err, res) => {
+        if (err) return handleError(callback, 'The API returned an error: ' + err, null, headerMap);
+        if (res == null) return handleError(callback, 'The API returned nothing', null , headerMap);
+        if(!res.data.values) return handleError(callback, 'there are no rows!', null, headerMap);       
+        
+        const rows = res.data.values;
+        if (!rows.length) {
+            return headerMap;
+        }
+        
+        for(let i = 0; i < rows.length; i++){
+            headerMap.set(rows[i].toString(), i);
+        }
+        
+        return headerMap;
+    });
+
+    return headerMap;
+}
+
+const getCleanUrls = (rows: any[][], linkColumnOrdinal: number) : URL[] => {
+    const urls = rows.map(r => {
+        try{
+            return new URL(r[linkColumnOrdinal].toString());
+        }catch{
+            return null;
+        }
+    });
+    return urls.filter(u => u) as URL[];
+}
+
+const handleError = (callback: (error?: any) => void, error: string, exception?: Error | null, defaultValue?: any) : void | any => {
     console.log(error, exception);
     callback(error);
+
+    if(defaultValue){
+        return defaultValue;
+    }
 }
 
 export { readUrls };
