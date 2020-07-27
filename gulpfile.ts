@@ -60,7 +60,7 @@ function run(callback: (error?: any) => void, command: string){
     
     const functionToRun = main[command];
     
-    const outputPromise = functionToRun(callback);
+    const outputPromise = Promise.resolve(functionToRun(callback)).then(() => callback(), (e) => callback(e));
 
     return outputPromise;
 }
