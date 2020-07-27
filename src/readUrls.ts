@@ -2,6 +2,8 @@ import fs from 'fs';
 import readline from 'readline';
 import { google } from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
+import { ChandigarhSheetID } from "./constants";
+import SheetWrapper from './SheetWrapper';
 import { connect } from 'puppeteer';
 
 // If modifying these scopes, delete token.json.
@@ -63,70 +65,32 @@ const getNewToken = (oAuth2Client: OAuth2Client, callback: (client: OAuth2Client
     });
 }
 
-const readUrls = (callback: (error?: any) => void) => {
+const readUrls = () => {    
     // Load client secrets from a local file.
     fs.readFile('credentials.json', (err, content) => {
-        if (err) return handleError(callback, 'Error loading client secret file:', err);
+        if (err) throw 'Error loading client secret file:';
         // Authorize a client with credentials, then call the Google Sheets API.
         
-        authorize(JSON.parse(content.toString()), (client: OAuth2Client) => readSheet(client, callback));
+        authorize(JSON.parse(content.toString()), (client: OAuth2Client) => readSheet(client));
     });
 }
 
-const readSheet = (auth: OAuth2Client, callback: (error?: any) => void) => {
-    const headerMap = getHeaderLookup(auth, callback);
-    const sheets = google.sheets({ version: 'v4', auth });
-    sheets.spreadsheets.values.get({
-        spreadsheetId: '1aCNSfTKJqLboNnajcaSosN05YVy2QhX3jr9UzqrFrLQ',
-        range: 'A2:P',
-    }, (err, res) => {
-        if (err) return handleError(callback, 'The API returned an error: ' + err);
-        if (res == null) return handleError(callback, 'The API returned nothing');
-        if(!res.data.values) return handleError(callback, 'there are no rows!');
+const readSheet = async (auth: OAuth2Client) => {
+    const chandigarhSheet = new SheetWrapper(ChandigarhSheetID, auth);    
+    const headerMap = await chandigarhSheet.getHeaderLookup('P');
+    
+    const linkColumnOrdinal = headerMap.get('Link');
+    if(!linkColumnOrdinal) throw 'Cannot find link column, did the name change?';
+    
+    const rows = await chandigarhSheet.read('A2:P');
 
-        const rows = res.data.values;
-        if (rows.length) {
-            const linkColumnOrdinal = headerMap.get('Link');
-            if(!linkColumnOrdinal) return handleError(callback, 'Cannot find link column, did the name change?');
-            const uris = getCleanUrls(rows, linkColumnOrdinal);
-            const domains = uris.map(u => u.hostname);
-            
-            const distinctHostNames = domains.filter((host, index) => domains.indexOf(host) === index);
-            distinctHostNames.forEach(h => {
-                console.log(h);
-            });
-            callback();
-        } else {
-            handleError(callback, 'No data found.');
-        }
+    const uris = getCleanUrls(rows, linkColumnOrdinal);
+    const domains = uris.map(u => u.hostname);
+    
+    const distinctHostNames = domains.filter((host, index) => domains.indexOf(host) === index);
+    distinctHostNames.forEach(h => {
+        console.log(h);
     });
-}
-
-const getHeaderLookup = (auth: OAuth2Client, callback: (error?: any) => void) : Map<string, number> => {
-    const headerMap = new Map<string, number>();
-    const sheets = google.sheets({ version: 'v4', auth });
-    sheets.spreadsheets.values.get({
-        spreadsheetId: '1aCNSfTKJqLboNnajcaSosN05YVy2QhX3jr9UzqrFrLQ',
-        range: 'A1:P1',
-        majorDimension: 'COLUMNS'
-    }, (err, res) => {
-        if (err) return handleError(callback, 'The API returned an error: ' + err, null, headerMap);
-        if (res == null) return handleError(callback, 'The API returned nothing', null , headerMap);
-        if(!res.data.values) return handleError(callback, 'there are no rows!', null, headerMap);       
-        
-        const rows = res.data.values;
-        if (!rows.length) {
-            return headerMap;
-        }
-        
-        for(let i = 0; i < rows.length; i++){
-            headerMap.set(rows[i].toString(), i);
-        }
-        
-        return headerMap;
-    });
-
-    return headerMap;
 }
 
 const getCleanUrls = (rows: any[][], linkColumnOrdinal: number) : URL[] => {
@@ -140,13 +104,5 @@ const getCleanUrls = (rows: any[][], linkColumnOrdinal: number) : URL[] => {
     return urls.filter(u => u) as URL[];
 }
 
-const handleError = (callback: (error?: any) => void, error: string, exception?: Error | null, defaultValue?: any) : void | any => {
-    console.log(error, exception);
-    callback(error);
-
-    if(defaultValue){
-        return defaultValue;
-    }
-}
 
 export { readUrls };
