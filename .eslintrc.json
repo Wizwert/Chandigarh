@@ -1,0 +1,25 @@
+{
+    "env": {
+        "browser": true,
+        "es2020": true
+    },
+    "extends": [
+        "google"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": 11,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "linebreak-style": "off",
+        "max-len": "off",
+        "require-jsdoc": "off",
+        "valid-jsdoc": "off",
+        "eol-last": "off",
+        "no-unused-vars": "warn"
+    }
+}
