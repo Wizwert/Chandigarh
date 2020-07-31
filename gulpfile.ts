@@ -57,34 +57,6 @@ function babelify(js: stream.Readable) {
   return stream.pipe(gulp.dest(dir));
 }
 
-function runCrawl(callback: (error?: any) => void) {
-  return run(callback, 'crawl');
-}
-
-function readUrls(callback: (error?: any) => void) {
-  return run(callback, 'readUrls');
-}
-
-function run(callback: (error?: any) => void, command: string) {
-  const main = require('./dist/index');
-
-  const functionToRun = main[command];
-
-  const outputPromise = Promise.resolve(functionToRun(...process.argv.slice(3))).then(() => callback(), (e) => callback(e));
-
-  return outputPromise;
-}
-
-function testSearch(callback: (error?: any) => void) {
-  try {
-    const main = require('./dist/index');
-    const search = main['searchSite'];
-    Promise.resolve(search('www.artcurial.com', 'chandigarh')).then(() => callback, (e) => callback(e));
-  } catch (error) {
-    callback(error);
-  }
-}
-
 function install(cb: (error?: any) => void) {
   const npm = require('npm');
   const npmConfig = {};
@@ -121,10 +93,8 @@ function clearDirectory(cb: (error?: any) => void) {
 
 const bootstrap = series(install, runCompile);
 const build = series(clearDirectory, runCompile);
-const crawl = series(runCompile, runCrawl);
-const read = series(runCompile, readUrls);
-const search = series(runCompile, testSearch);
+
 const watchFiles = series(clearDirectory, runCompile, buildAndWatch);
 
-export {bootstrap, build, crawl, read, search, watchFiles};
+export {bootstrap, build, watchFiles};
 export default build;
