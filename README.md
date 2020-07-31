@@ -9,6 +9,9 @@ Workflow:
 To run the code Gulp is required
 `npm install -g gulp`
 
+To run the CLI locally
+`npm link`
+
 ## Commands
 ***
 ### bootstrap
@@ -19,10 +22,14 @@ sets up the repo for use
 Usage: `gulp build`
 Compiles code
 
-### crawl
-Usage `gulp crawl`
-Hits google.com and searches for 'Chandigarh Chair' and saves a pdf
+### watch
+Usage: `gulp watchFiles`
+Compiles code
+
+### search
+Usage `chan search --site <site> --term <term>`
+Hits google.com and searches for 'Chandigarh Chair' on the provided site
 
 ### read
-Usage `gulp read`
+Usage `chan read`
 Reads from the Chandigarh spreadsheet and extracts the distinct domains listed there
