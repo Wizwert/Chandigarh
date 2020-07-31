@@ -4,8 +4,8 @@
   "description": "A collection of Scripts for Data Mining Related to Chandigarh furniture",
   "main": "index.js",
   "scripts": {
-    "postpack": "rimraf oclif.manifest.json",
-    "prepack": "rimraf lib && tsc -b && oclif-dev manifest && oclif-dev readme"
+    "build": "gulp build",
+    "test": "echo 'We are bad people and dont have tests' && exit code 0"
   },
   "repository": {
     "type": "git",
