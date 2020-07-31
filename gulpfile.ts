@@ -1,5 +1,5 @@
 // / <reference path="./types/gulp-eslint.d.ts" />
-import gulp, {series} from 'gulp';
+import gulp, {series, watch} from 'gulp';
 import * as stream from 'stream';
 
 /** JS and TS */
@@ -15,11 +15,9 @@ import path from 'path';
 import eslint from 'gulp-eslint';
 
 const cwd = process.cwd();
-const dir = path.join(cwd, './dist/');
+const dir = path.join(cwd, './dist');
 
 function runCompile() {
-  rimraf.sync(dir);
-
   const error = 0;
   const source = ['src/**/*.tsx', 'src/**/*.ts', 'typings/**/*.d.ts'];
 
@@ -102,12 +100,31 @@ function install(cb: (error?: any) => void) {
   });
 }
 
+function buildAndWatch(cb: (error?: any) => void) {
+  const tsProject = ts.createProject('tsconfig.json');
+
+  watch(['src/**/*.tsx', 'src/**/*.ts'], (cb) =>{
+    gulp.src(['src/**/*.tsx', 'src/**/*.ts'])
+        .pipe(eslint())
+        .pipe(eslint.formatEach('compact'))
+        .pipe(tsProject())
+        .pipe(gulp.dest(dir));
+    cb();
+  });
+}
+
+function clearDirectory(cb: (error?: any) => void) {
+  rimraf.sync(dir);
+  cb();
+}
+
 
 const bootstrap = series(install, runCompile);
-const build = series(runCompile);
+const build = series(clearDirectory, runCompile);
 const crawl = series(runCompile, runCrawl);
 const read = series(runCompile, readUrls);
 const search = series(runCompile, testSearch);
+const watchFiles = series(clearDirectory, runCompile, buildAndWatch);
 
-export {bootstrap, build, crawl, read, search};
+export {bootstrap, build, crawl, read, search, watchFiles};
 export default build;

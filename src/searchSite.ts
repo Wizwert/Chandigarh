@@ -22,11 +22,14 @@ const searchSite = async (domain: string, searchTerm: string) : Promise<URL[]> =
   ]);
 
   const links = await page.$$eval('a', (as) => as.map((a) => (a as HTMLAnchorElement).href));
-  const pageLinks = links.filter((l) => l.startsWith(domain));
-  console.log(pageLinks);
+
+  const pageLinks = links.filter((l) => l !== '' && (new URL(l)).hostname == domain).map((l) => new URL(l));
+
   page.pdf({path: './search.pdf'});
 
-  const urls: URL[] = [];
+  const urls: URL[] = {
+    ...pageLinks,
+  };
   return urls;
 };
 
