@@ -25,7 +25,7 @@ const searchSite = async (domain: string, searchTerm: string) : Promise<URL[]> =
   const links = await page.$$eval('a', (as) => as.map((a) => (a as HTMLAnchorElement).href));
   const pageLinks = links.filter((link) => link !== '' && (new URL(link)).hostname == domain).map((l) => new URL(l));
 
-  let urls: URL[] = [];
+  const urls: URL[] = [];
   const scraper = require('puppeteer-google-scraper');
   scraper(searchTerm, {limit: Number.MAX_VALUE, headless: true}).then((d: any) => {
     urls.push(new URL(d.url));
