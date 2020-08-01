@@ -21,15 +21,17 @@ const searchSite = async (domain: string, searchTerm: string) : Promise<URL[]> =
     page.keyboard.press('Enter'),
   ]);
 
+  // TODO: Navigate all the pages not just first.
   const links = await page.$$eval('a', (as) => as.map((a) => (a as HTMLAnchorElement).href));
+  const pageLinks = links.filter((link) => link !== '' && (new URL(link)).hostname == domain).map((l) => new URL(l));
 
-  const pageLinks = links.filter((l) => l !== '' && (new URL(l)).hostname == domain).map((l) => new URL(l));
+  let urls: URL[] = [];
+  const scraper = require('puppeteer-google-scraper');
+  scraper(searchTerm, {limit: Number.MAX_VALUE, headless: true}).then((d: any) => {
+    urls.push(new URL(d.url));
+  });
 
-  page.pdf({path: './search.pdf'});
-
-  const urls: URL[] = {
-    ...pageLinks,
-  };
+  // page.pdf({path: './search.pdf'});
   return urls;
 };
 
