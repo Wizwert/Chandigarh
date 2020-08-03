@@ -6,8 +6,6 @@ Workflow:
 2. Search google for chandigarh on sites already listed in Chandigarh sheet
 3. Write list of new Links back to Datastore (new googlesheet?)
 
-Testing a webhook
-
 To run the code Gulp is required
 `npm install -g gulp`
 
