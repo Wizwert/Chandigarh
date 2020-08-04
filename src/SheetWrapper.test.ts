@@ -1,8 +1,8 @@
-import SheetWrapper from './sheetwrapper';
+import SheetWrapper from './SheetWrapper';
 import {OAuth2Client} from 'google-auth-library';
-import {sheets_v4} from 'googleapis/build/src/apis/sheets/v4';
+import {sheets_v4 as sheetsV4} from 'googleapis/build/src/apis/sheets/v4';
 
-type mockSheet = sheets_v4.Sheets & { setMockValue: (value: any) => void}
+type mockSheet = sheetsV4.Sheets & { setMockValue: (value: any) => void}
 
 describe('SheetWrapper', () => {
   jest.mock('googleapis');
@@ -14,9 +14,8 @@ describe('SheetWrapper', () => {
     });
 
     test('api returns error - throws', async () =>{
-      const sheetMock = require('googleapis');
       const err = 'new error';
-      
+
       const sheetWrapper = new SheetWrapper('test', new OAuth2Client());
       const mockSheets = sheetWrapper.sheets as mockSheet;
 
