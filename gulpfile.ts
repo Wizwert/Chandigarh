@@ -1,5 +1,5 @@
 // / <reference path="./types/gulp-eslint.d.ts" />
-import gulp, {series, watch} from 'gulp';
+import gulp, {series, watch, parallel} from 'gulp';
 import * as stream from 'stream';
 
 /** JS and TS */
@@ -16,14 +16,10 @@ import eslint from 'gulp-eslint';
 
 const cwd = process.cwd();
 const dir = path.join(cwd, './dist');
+const source = ['src/**/*.tsx', 'src/**/*.ts', 'typings/**/*.d.ts'];
 
-function runCompile() {
-  const error = 0;
-  const source = ['src/**/*.tsx', 'src/**/*.ts', 'typings/**/*.d.ts'];
-
-  const tsProject = ts.createProject('tsconfig.json');
-
-  const tsResult = gulp.src(source)
+function lint() {
+  return gulp.src(source)
       .pipe(eslint())
       .pipe(eslint.formatEach())
       .pipe(eslint.results((results: any) => {
@@ -32,14 +28,22 @@ function runCompile() {
         console.log(`Total Warnings: ${results.warningCount}`);
         console.log(`Total Errors: ${results.errorCount}`);
       }))
-      .pipe(eslint.failAfterError())
+      .pipe(eslint.failAfterError());
+}
+
+function runCompile() {
+  const error = 0;
+
+  const tsProject = ts.createProject('tsconfig.json');
+
+  const tsResult = gulp.src(source)
       .pipe(tsProject());
 
-  function check() {
+  const check = () => {
     if (error) {
       process.exit(1);
     }
-  }
+  };
 
   tsResult.on('finish', check);
   tsResult.on('end', check);
@@ -92,9 +96,9 @@ function clearDirectory(cb: (error?: any) => void) {
 
 
 const bootstrap = series(install, runCompile);
-const build = series(clearDirectory, runCompile);
+const build = series(clearDirectory, parallel(lint, runCompile));
 
-const watchFiles = series(clearDirectory, runCompile, buildAndWatch);
+const watchFiles = series(build, buildAndWatch);
 
-export {bootstrap, build, watchFiles};
+export {bootstrap, build, watchFiles as watch};
 export default build;
