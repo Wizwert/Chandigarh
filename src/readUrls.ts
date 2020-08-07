@@ -75,7 +75,7 @@ const getNewToken = async (oAuth2Client: OAuth2Client): Promise<string> => {
   });
 };
 
-const readUrls = async () => {
+const readUrls = async () : Promise<Map<string, URL[]>> => {
   // Load client secrets from a local file.
   const credentials = fs.readFileSync('credentials.json');
 
@@ -83,7 +83,7 @@ const readUrls = async () => {
 
   const existingData = await readSheet(client);
 
-  console.log(existingData.keys());
+  return existingData;
 };
 
 const readSheet = async (auth: OAuth2Client) : Promise<Map<string, URL[]>> => {
@@ -128,4 +128,4 @@ const getCleanUrls = (rows: any[][], linkColumnOrdinal: number) : URL[] => {
 };
 
 
-export {readUrls};
+export {readUrls, getCleanUrls};

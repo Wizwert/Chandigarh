@@ -75,4 +75,31 @@ describe('SheetWrapper', () => {
       expect(sheetWrapper.read('A1')).resolves.toBe(rows);
     });
   });
+  describe('getHeaderLookup', () => {
+    test('get header lookup', async () => {
+      const columns = [
+        ['A2'],
+        ['B2'],
+        ['C2'],
+        ['D2'],
+      ];
+
+      const expectedResult = new Map<string, number>();
+      expectedResult.set('A2', 0);
+      expectedResult.set('B2', 1);
+      expectedResult.set('C2', 2);
+      expectedResult.set('D2', 3);
+
+      const sheetWrapper = new SheetWrapper('test', new OAuth2Client());
+      const mockSheets = sheetWrapper.sheets as mockSheet;
+
+      mockSheets.setMockValue({res: {
+        data: {
+          values: columns,
+        },
+      }});
+
+      expect(sheetWrapper.getHeaderLookup('N')).resolves.toBe<Map<string, number>>(expectedResult);
+    });
+  });
 });

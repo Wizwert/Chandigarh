@@ -9,4 +9,9 @@ module.exports = {
   'transform': {
     '^.+\\.(ts|tsx)$': 'ts-jest',
   },
+  'collectCoverageFrom': [
+    '**/*.{ts,tsx}',
+    '!**/node_modules/**',
+    '!**/__mocks__/**',
+  ],
 };
