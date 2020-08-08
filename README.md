@@ -1,6 +1,8 @@
 # Chandigarh
 This is the repository for all code related to data mining for the Chandigarh Chair project
 
+![Node.js CI](https://github.com/Wizwert/Chandigarh/workflows/Node.js%20CI/badge.svg)
+
 Workflow:
 1. Read existing links from Chandigarh sheet
 2. Search google for chandigarh on sites already listed in Chandigarh sheet

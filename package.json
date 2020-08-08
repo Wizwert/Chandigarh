@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "gulp build",
-    "test": "echo 'We are bad people and dont have tests'"
+    "test": "jest",
+    "cover": "jest --coverage"
   },
   "repository": {
     "type": "git",
@@ -24,25 +25,26 @@
     "./src"
   ],
   "bin": {
-    "chan": "./dist/cli/index.js"
+    "chdg": "./dist/cli/index.js"
   },
   "homepage": "https://github.com/Wizwert/Chandigarh#readme",
   "dependencies": {
     "bufferutil": "^4.0.1",
     "commander": "^6.0.0",
-    "googleapis": "^39.2.0",
+    "googleapis": "^58.0.0",
     "puppeteer": "^5.2.1",
     "utf-8-validate": "^5.0.2"
   },
   "devDependencies": {
     "@types/gulp": "^4.0.6",
     "@types/gulp-sourcemaps": "0.0.32",
+    "@types/jest": "^26.0.9",
     "@types/merge2": "^1.3.0",
     "@types/puppeteer": "^3.0.1",
     "@types/rimraf": "^3.0.0",
-    "@typescript-eslint/eslint-plugin": "^3.7.1",
-    "@typescript-eslint/parser": "^3.7.1",
-    "eslint": "^7.5.0",
+    "@typescript-eslint/eslint-plugin": "^3.8.0",
+    "@typescript-eslint/parser": "^3.8.0",
+    "eslint": "^7.6.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.22.0",
@@ -54,9 +56,11 @@
     "gulp-eslint": "^6.0.0",
     "gulp-sourcemaps": "^2.6.5",
     "gulp-typescript": "^6.0.0-alpha.1",
+    "jest": "^26.2.2",
     "merge2": "^1.4.1",
     "npm": "^6.14.7",
     "rimraf": "^3.0.2",
+    "ts-jest": "^26.1.4",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.7"
   }

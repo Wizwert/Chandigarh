@@ -8,7 +8,7 @@ const readUrls = async () => {
 
   const existingData = await readSheet(client);
 
-  console.log(existingData.keys());
+  return existingData;
 };
 
 const readSheet = async (auth: OAuth2Client) : Promise<Map<string, URL[]>> => {
@@ -53,4 +53,4 @@ const getCleanUrls = (rows: any[][], linkColumnOrdinal: number) : URL[] => {
 };
 
 
-export {readUrls};
+export {readUrls, getCleanUrls};

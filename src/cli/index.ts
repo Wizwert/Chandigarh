@@ -6,7 +6,7 @@ import {readUrls, searchSite} from '../index';
 program.version('0.0.1')
     .command('read')
     .description('read urls from Chandigarh spread sheet')
-    .action((args) => {
+    .action(() => {
       readUrls();
     });
 

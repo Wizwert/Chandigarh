@@ -20,6 +20,7 @@
         "require-jsdoc": "off",
         "valid-jsdoc": "off",
         "eol-last": "off",
-        "no-unused-vars": "warn"
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": ["error"]
     }
 }
