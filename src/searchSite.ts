@@ -24,8 +24,11 @@ const searchSite = async (domain: string, searchTerm: string) : Promise<URL[]> =
   const links = await page.$$eval('a', (as) => as.map((a) => (a as HTMLAnchorElement).href));
 
   const pageLinks = links.filter((l) => l !== '' && (new URL(l)).hostname == domain).map((l) => new URL(l));
+  const resultLinks = links.filter((l) => l !== '' && (new URL(l)).hostname.indexOf('google') > -1).map((l) => new URL(l));
 
-  page.pdf({path: './search.pdf'});
+  console.log(resultLinks);
+
+  // page.pdf({path: './search.pdf'});
 
   const urls: URL[] = {
     ...pageLinks,
