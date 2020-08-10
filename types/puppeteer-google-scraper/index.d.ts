@@ -10,4 +10,4 @@ export interface ISearchResult {
   url: string;
 }
 
-export default function search(term: string, options?: IPuppeteerGoogleScraperOptions): ISearchResult[];
+export default function search(term: string, options?: IPuppeteerGoogleScraperOptions): Promise <ISearchResult[]>;
