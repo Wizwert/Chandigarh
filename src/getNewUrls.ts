@@ -1,3 +1,4 @@
+import {find} from 'lodash';
 
 const isNewURL = (existingUrls: Map<string, URL[]>, potentialNewUrl: URL): boolean => {
   const hostName = potentialNewUrl.hostname;
@@ -6,7 +7,10 @@ const isNewURL = (existingUrls: Map<string, URL[]>, potentialNewUrl: URL): boole
   }
 
   const urlsForHost = existingUrls.get(hostName) || [];
-  return urlsForHost.includes(potentialNewUrl);
+
+  const matchingURL = find(urlsForHost, (u) => u.href === potentialNewUrl.href);
+
+  return !matchingURL;
 };
 
 const getNewUrls = (existingUrls: Map<string, URL[]>, foundUrls: URL[]): URL[] => {
