@@ -1,4 +1,4 @@
-import {find} from 'lodash';
+import {find, every} from 'lodash';
 
 const isNewURL = (existingUrls: Map<string, URL[]>, potentialNewUrl: URL): boolean => {
   const hostName = potentialNewUrl.hostname;
@@ -14,7 +14,15 @@ const isNewURL = (existingUrls: Map<string, URL[]>, potentialNewUrl: URL): boole
 };
 
 const getNewUrls = (existingUrls: Map<string, URL[]>, foundUrls: URL[]): URL[] => {
-  return foundUrls.filter((u) => isNewURL(existingUrls, u));
+  return getNewUrlsFromManySources(foundUrls, existingUrls);
 };
 
-export {getNewUrls};
+const isNewURLAcrossManySources = (potentialNewUrl: URL, existingUrls: Map<string, URL[]>[]) : boolean => {
+  return every(existingUrls, (urlMap) => isNewURL(urlMap, potentialNewUrl));
+};
+
+const getNewUrlsFromManySources = (foundUrls: URL[], ...existingUrls: Map<string, URL[]>[]): URL[] => {
+  return foundUrls.filter((u) => isNewURLAcrossManySources(u, existingUrls));
+};
+
+export {getNewUrls, getNewUrlsFromManySources};
