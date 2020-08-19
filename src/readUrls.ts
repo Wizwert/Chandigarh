@@ -1,24 +1,41 @@
 import {OAuth2Client} from 'google-auth-library';
-import {ChandigarhSheetID} from './constants';
+import {ChandigarhSheetID, AutomationSheetID} from './constants';
 import SheetWrapper from './SheetWrapper';
 import {getClient} from './tokenUtil';
 
-const readUrls = async () => {
+const readUrlsFromWorkingSheet = async () => {
   const client = await getClient();
 
-  const existingData = await readSheet(client);
+  const existingData = await readSheet(client, ChandigarhSheetID, 'Masterlist', 'Link');
 
   return existingData;
 };
 
-const readSheet = async (auth: OAuth2Client) : Promise<Map<string, URL[]>> => {
-  const chandigarhSheet = new SheetWrapper(ChandigarhSheetID, auth);
-  const headerMap = await chandigarhSheet.getHeaderLookup('P');
+const readRejectedUrls = async () => {
+  const client = await getClient();
 
-  const linkColumnOrdinal = headerMap.get('Link');
-  if (!linkColumnOrdinal) throw new Error('Cannot find link column, did the name change?');
+  const existingData = await readSheet(client, AutomationSheetID, 'Rejected Urls', 'href');
 
-  const rows = await chandigarhSheet.read('A2:P');
+  return existingData;
+};
+
+const readAlreadyAddedAutomationUrls = async () => {
+  const client = await getClient();
+
+  const existingData = await readSheet(client, AutomationSheetID, 'New Urls', 'href');
+
+  return existingData;
+};
+
+const readSheet = async (auth: OAuth2Client, sheetId: string, tabName: string, linkcolumnName: string) : Promise<Map<string, URL[]>> => {
+  const chandigarhSheet = new SheetWrapper(sheetId, auth);
+  const headerMap = await chandigarhSheet.getHeaderLookup(`P`, tabName);
+  console.log('header map', headerMap);
+  const linkColumnOrdinal = headerMap.get(linkcolumnName);
+  console.log('column', linkColumnOrdinal);
+  if (linkColumnOrdinal === null || linkColumnOrdinal === undefined) throw new Error(`Cannot find ${linkcolumnName} column, did the name change?`);
+
+  const rows = await chandigarhSheet.read(`'${tabName}'!A2:P`);
 
   const urls = getCleanUrls(rows, linkColumnOrdinal);
 
@@ -53,4 +70,4 @@ const getCleanUrls = (rows: any[][], linkColumnOrdinal: number) : URL[] => {
 };
 
 
-export {readUrls, getCleanUrls};
+export {readUrlsFromWorkingSheet as readUrls, getCleanUrls, readRejectedUrls, readAlreadyAddedAutomationUrls};

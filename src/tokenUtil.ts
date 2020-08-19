@@ -33,7 +33,6 @@ const authorize = async (credentials: any) : Promise<OAuth2Client> => {
   const oAuth2Client = new google.auth.OAuth2(
       client_id, client_secret, redirect_uris[0]);
 
-  console.log(fs.existsSync(TOKEN_PATH));
   // Check if we have previously stored a token.
   let token: string;
   if (fs.existsSync(TOKEN_PATH)) {

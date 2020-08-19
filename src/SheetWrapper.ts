@@ -49,10 +49,13 @@ class SheetWrapper {
    * Returns a map of ColumnName to Column index
    * @param maxColumn The maximum column to search to, in "A" notation
    */
-  async getHeaderLookup(maxColumn: string): Promise<Map<string, number>> {
+  async getHeaderLookup(maxColumn: string, tabName?: string): Promise<Map<string, number>> {
     const headerMap = new Map<string, number>();
-
-    const columns = await this.read(`A1:${maxColumn}1`, {majorDimension: 'COLUMNS'});
+    const tabNamePrefix = tabName ? `'${tabName}'!` : '';
+    const range = `${tabNamePrefix}A1:${maxColumn}1`;
+    // console.log('range', range);
+    const columns = await this.read(range, {majorDimension: 'COLUMNS'});
+    // console.log(columns);
     columns.forEach((v, i) => {
       headerMap.set(v.toString(), i);
     });
@@ -60,8 +63,8 @@ class SheetWrapper {
     return headerMap;
   }
 
-  async write(data: any[], maxColumn: string): Promise<number> {
-    const headerMap = await this.getHeaderLookup(maxColumn);
+  async write(data: any[], maxColumn: string, tabName?: string): Promise<number> {
+    const headerMap = await this.getHeaderLookup(maxColumn, tabName);
 
     const rows: any[][] = [[]];
 
@@ -73,10 +76,12 @@ class SheetWrapper {
       });
     });
 
+    const tabNamePrefix = tabName ? `${tabName}!` : '';
+
     const response = await this.sheets.spreadsheets.values.append({
       spreadsheetId: this.sheetID,
-      range: `A1:${maxColumn}`,
-      valueInputOption: 'RAW',
+      range: `${tabNamePrefix}A1:${maxColumn}`,
+      valueInputOption: 'USER_ENTERED',
       requestBody: {
         majorDimension: 'ROWS',
         values: rows,
