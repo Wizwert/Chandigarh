@@ -14,8 +14,7 @@ program.command('search')
     // .requiredOption('-s, --site <site>', 'site to search')
     // .requiredOption('-t, --term <term>', 'The term to search for on the site', 'chandigarh')
     .action(() => {
-      const result = gatherUrls();
-      console.log(result);
+      gatherUrls();
     });
 
 

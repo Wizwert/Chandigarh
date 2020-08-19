@@ -31,11 +31,12 @@ class SheetWrapper {
       this.sheets.spreadsheets.values.get({
         spreadsheetId: this.sheetID,
         range: range,
+        majorDimension: 'ROWS',
         ...options,
       }, (err, res) => {
         if (err) return reject(new Error('The API returned an error: ' + err));
         if (res == null) return reject(new Error('The API returned nothing'));
-        if (!res.data.values) return reject(new Error('there are no rows!'));
+        if (!res.data.values) return resolve([[]]);
 
         const data = res.data.values;
         if (!data.length) return reject(new Error('No Rows Returned'));
@@ -65,22 +66,23 @@ class SheetWrapper {
     const rows: any[][] = [[]];
 
     data.forEach((d) =>{
-      const row = [];
-      headerMap.forEach((value, key) =>{
-        row[value] = d[key];
+      const row: any = [];
+      headerMap.forEach((columnIndex, columnHeader) =>{
+        row[columnIndex] = d[columnHeader];
+        rows.push(row);
       });
     });
 
     const response = await this.sheets.spreadsheets.values.append({
       spreadsheetId: this.sheetID,
       range: `A1:${maxColumn}`,
+      valueInputOption: 'RAW',
       requestBody: {
         majorDimension: 'ROWS',
         values: rows,
       },
     });
 
-    console.log(response.statusText);
     return response.status;
   }
 }
