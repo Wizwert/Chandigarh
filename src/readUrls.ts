@@ -20,9 +20,9 @@ const readSheet = async (auth: OAuth2Client) : Promise<Map<string, URL[]>> => {
 
   const rows = await chandigarhSheet.read('A2:P');
 
-  const uris = getCleanUrls(rows, linkColumnOrdinal);
+  const urls = getCleanUrls(rows, linkColumnOrdinal);
 
-  const groupedByDomain = groupBy(uris, (x) => x.hostname);
+  const groupedByDomain = groupBy(urls, (x) => x.hostname);
 
   return groupedByDomain;
 };
