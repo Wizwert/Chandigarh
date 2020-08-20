@@ -30,9 +30,9 @@ const readAlreadyAddedAutomationUrls = async () => {
 const readSheet = async (auth: OAuth2Client, sheetId: string, tabName: string, linkcolumnName: string) : Promise<Map<string, URL[]>> => {
   const chandigarhSheet = new SheetWrapper(sheetId, auth);
   const headerMap = await chandigarhSheet.getHeaderLookup(`P`, tabName);
-  console.log('header map', headerMap);
+
   const linkColumnOrdinal = headerMap.get(linkcolumnName);
-  console.log('column', linkColumnOrdinal);
+
   if (linkColumnOrdinal === null || linkColumnOrdinal === undefined) throw new Error(`Cannot find ${linkcolumnName} column, did the name change?`);
 
   const rows = await chandigarhSheet.read(`'${tabName}'!A2:P`);
