@@ -31,11 +31,12 @@ class SheetWrapper {
       this.sheets.spreadsheets.values.get({
         spreadsheetId: this.sheetID,
         range: range,
+        majorDimension: 'ROWS',
         ...options,
       }, (err, res) => {
         if (err) return reject(new Error('The API returned an error: ' + err));
         if (res == null) return reject(new Error('The API returned nothing'));
-        if (!res.data.values) return reject(new Error('there are no rows!'));
+        if (!res.data.values) return resolve([[]]);
 
         const data = res.data.values;
         if (!data.length) return reject(new Error('No Rows Returned'));
@@ -48,10 +49,13 @@ class SheetWrapper {
    * Returns a map of ColumnName to Column index
    * @param maxColumn The maximum column to search to, in "A" notation
    */
-  async getHeaderLookup(maxColumn: string): Promise<Map<string, number>> {
+  async getHeaderLookup(maxColumn: string, tabName?: string): Promise<Map<string, number>> {
     const headerMap = new Map<string, number>();
-
-    const columns = await this.read(`A1:${maxColumn}1`, {majorDimension: 'COLUMNS'});
+    const tabNamePrefix = tabName ? `'${tabName}'!` : '';
+    const range = `${tabNamePrefix}A1:${maxColumn}1`;
+    // console.log('range', range);
+    const columns = await this.read(range, {majorDimension: 'COLUMNS'});
+    // console.log(columns);
     columns.forEach((v, i) => {
       headerMap.set(v.toString(), i);
     });
@@ -59,28 +63,31 @@ class SheetWrapper {
     return headerMap;
   }
 
-  async write(data: any[], maxColumn: string): Promise<number> {
-    const headerMap = await this.getHeaderLookup(maxColumn);
+  async write(data: any[], maxColumn: string, tabName?: string): Promise<number> {
+    const headerMap = await this.getHeaderLookup(maxColumn, tabName);
 
     const rows: any[][] = [[]];
 
     data.forEach((d) =>{
-      const row = [];
-      headerMap.forEach((value, key) =>{
-        row[value] = d[key];
+      const row: any = [];
+      headerMap.forEach((columnIndex, columnHeader) =>{
+        row[columnIndex] = d[columnHeader];
+        rows.push(row);
       });
     });
 
+    const tabNamePrefix = tabName ? `${tabName}!` : '';
+
     const response = await this.sheets.spreadsheets.values.append({
       spreadsheetId: this.sheetID,
-      range: `A1:${maxColumn}`,
+      range: `${tabNamePrefix}A1:${maxColumn}`,
+      valueInputOption: 'USER_ENTERED',
       requestBody: {
         majorDimension: 'ROWS',
         values: rows,
       },
     });
 
-    console.log(response.statusText);
     return response.status;
   }
 }

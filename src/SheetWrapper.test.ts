@@ -99,7 +99,7 @@ describe('SheetWrapper', () => {
         },
       }});
 
-      expect(sheetWrapper.getHeaderLookup('N')).resolves.toBe<Map<string, number>>(expectedResult);
+      expect(sheetWrapper.getHeaderLookup('N', '')).resolves.toBe<Map<string, number>>(expectedResult);
     });
   });
 });

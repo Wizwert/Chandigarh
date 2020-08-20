@@ -10,7 +10,7 @@ const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
-const TOKEN_PATH = 'token.json';
+const TOKEN_PATH = './token.json';
 
 const getClient = async (path: string = 'credentials.json') : Promise<OAuth2Client> => {
   // Load client secrets from a local file.
