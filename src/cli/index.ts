@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import program from 'commander';
-import {readUrls, gatherUrls} from '../index';
+import {readUrls, gatherUrls, dedupe} from '../index';
 
 program.version('0.0.1')
     .command('read')
@@ -15,6 +15,13 @@ program.command('search')
     // .requiredOption('-t, --term <term>', 'The term to search for on the site', 'chandigarh')
     .action(() => {
       gatherUrls();
+    });
+
+program.command('dedupe')
+    // .requiredOption('-s, --site <site>', 'site to search')
+    // .requiredOption('-t, --term <term>', 'The term to search for on the site', 'chandigarh')
+    .action(async () => {
+      await dedupe();
     });
 
 

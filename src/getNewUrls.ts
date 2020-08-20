@@ -8,7 +8,7 @@ const isNewURL = (existingUrls: Map<string, URL[]>, potentialNewUrl: URL): boole
 
   const urlsForHost = existingUrls.get(hostName) || [];
 
-  const matchingURL = find(urlsForHost, (u) => u.href === potentialNewUrl.href);
+  const matchingURL = find(urlsForHost, (u) => u.host === potentialNewUrl.host && u.pathname == potentialNewUrl.pathname);
 
   return !matchingURL;
 };
