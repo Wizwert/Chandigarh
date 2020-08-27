@@ -63,6 +63,15 @@ class SheetWrapper {
     return headerMap;
   }
 
+  async clear(ranges: string | string[]) {
+    await this.sheets.spreadsheets.values.batchClear({
+      spreadsheetId: this.sheetID,
+      requestBody: {
+        ranges: [...ranges],
+      },
+    });
+  }
+
   async write(data: any[], maxColumn: string, tabName?: string): Promise<number> {
     const headerMap = await this.getHeaderLookup(maxColumn, tabName);
 
