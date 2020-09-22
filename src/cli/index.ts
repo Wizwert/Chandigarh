@@ -24,5 +24,4 @@ program.command('dedupe')
       await dedupe();
     });
 
-
 program.parse(process.argv);

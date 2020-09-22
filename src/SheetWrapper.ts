@@ -9,7 +9,7 @@ import {sheets_v4} from 'googleapis/build/src/apis/sheets/v4';
 class SheetWrapper {
   sheetID: string;
   auth: OAuth2Client;
-  sheets: sheets_v4.Sheets;
+  googleApi: sheets_v4.Sheets;
   /**
    * @constructor
    * @param sheetID Id of the sheet to be accessed
@@ -18,7 +18,7 @@ class SheetWrapper {
   constructor(sheetID: string, auth: OAuth2Client) {
     this.sheetID = sheetID;
     this.auth = auth;
-    this.sheets = google.sheets({version: 'v4', auth});
+    this.googleApi = google.sheets({version: 'v4', auth});
   }
 
   /**
@@ -28,7 +28,7 @@ class SheetWrapper {
    */
   async read(range: string, options?: sheets_v4.Params$Resource$Spreadsheets$Values$Get): Promise<any[][]> {
     return new Promise((resolve, reject) => {
-      this.sheets.spreadsheets.values.get({
+      this.googleApi.spreadsheets.values.get({
         spreadsheetId: this.sheetID,
         range: range,
         majorDimension: 'ROWS',
@@ -78,7 +78,7 @@ class SheetWrapper {
 
     const tabNamePrefix = tabName ? `${tabName}!` : '';
 
-    const response = await this.sheets.spreadsheets.values.append({
+    const response = await this.googleApi.spreadsheets.values.append({
       spreadsheetId: this.sheetID,
       range: `${tabNamePrefix}A1:${maxColumn}`,
       valueInputOption: 'USER_ENTERED',

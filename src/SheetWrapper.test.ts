@@ -17,7 +17,7 @@ describe('SheetWrapper', () => {
       const err = 'new error';
 
       const sheetWrapper = new SheetWrapper('test', new OAuth2Client());
-      const mockSheets = sheetWrapper.sheets as mockSheet;
+      const mockSheets = sheetWrapper.googleApi as mockSheet;
 
       mockSheets.setMockValue({err});
 
@@ -26,7 +26,7 @@ describe('SheetWrapper', () => {
 
     test('api returns no response object - throws', async () =>{
       const sheetWrapper = new SheetWrapper('test', new OAuth2Client());
-      const mockSheets = sheetWrapper.sheets as mockSheet;
+      const mockSheets = sheetWrapper.googleApi as mockSheet;
 
       mockSheets.setMockValue({});
 
@@ -35,7 +35,7 @@ describe('SheetWrapper', () => {
 
     test('api returns null rows - throws', async () =>{
       const sheetWrapper = new SheetWrapper('test', new OAuth2Client());
-      const mockSheets = sheetWrapper.sheets as mockSheet;
+      const mockSheets = sheetWrapper.googleApi as mockSheet;
 
       mockSheets.setMockValue({res: {
         data: {
@@ -47,7 +47,7 @@ describe('SheetWrapper', () => {
 
     test('api returns null rows - throws', async () =>{
       const sheetWrapper = new SheetWrapper('test', new OAuth2Client());
-      const mockSheets = sheetWrapper.sheets as mockSheet;
+      const mockSheets = sheetWrapper.googleApi as mockSheet;
 
       mockSheets.setMockValue({res: {
         data: {
@@ -65,7 +65,7 @@ describe('SheetWrapper', () => {
       ];
 
       const sheetWrapper = new SheetWrapper('test', new OAuth2Client());
-      const mockSheets = sheetWrapper.sheets as mockSheet;
+      const mockSheets = sheetWrapper.googleApi as mockSheet;
 
       mockSheets.setMockValue({res: {
         data: {
@@ -91,7 +91,7 @@ describe('SheetWrapper', () => {
       expectedResult.set('D2', 3);
 
       const sheetWrapper = new SheetWrapper('test', new OAuth2Client());
-      const mockSheets = sheetWrapper.sheets as mockSheet;
+      const mockSheets = sheetWrapper.googleApi as mockSheet;
 
       mockSheets.setMockValue({res: {
         data: {
