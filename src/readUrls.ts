@@ -1,5 +1,5 @@
 import {OAuth2Client} from 'google-auth-library';
-import {ChandigarhSheetID, AutomationSheetID} from './constants';
+import {chandigarhSheetID, automationSheetID, domainsToInclude} from './constants';
 import SheetWrapper from './SheetWrapper';
 import {getClient} from './tokenUtil';
 import {reject} from 'lodash';
@@ -56,7 +56,7 @@ const readUrlsFromWorkingSheet = async () => {
 const readRejectedUrls = async () => {
   const client = await getClient();
 
-  const existingData = await readSheet(client, AutomationSheetID, 'Rejected Urls', 'href');
+  const existingData = await readSheet(client, automationSheetID, 'Rejected Urls', 'href');
 
   return existingData;
 };
@@ -64,7 +64,7 @@ const readRejectedUrls = async () => {
 const readAlreadyAddedAutomationUrls = async () => {
   const client = await getClient();
 
-  const existingData = await readSheet(client, AutomationSheetID, 'New Urls', 'href');
+  const existingData = await readSheet(client, automationSheetID, 'New Urls', 'href');
 
   return existingData;
 };
