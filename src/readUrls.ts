@@ -1,5 +1,5 @@
 import {OAuth2Client} from 'google-auth-library';
-import {chandigarhSheetID, automationSheetID, domainsToInclude} from './constants';
+import {chandigarhSheetID} from './constants';
 import SheetWrapper from './SheetWrapper';
 import {getClient} from './tokenUtil';
 import {reject} from 'lodash';
@@ -7,26 +7,12 @@ import {reject} from 'lodash';
 const readUrlsFromWorkingSheet = async (sheetID: string = ChandigarhSheetID) => {
   const client = await getClient();
 
-  const existingData = await readSheet(client, sheetID, 'Masterlist', 'Link');
-
-  const chandigarhSheet = new SheetWrapper(ChandigarhSheetID, client);
+  const chandigarhSheet = new SheetWrapper(chandigarhSheetID, client);
 
   /**
    * Get all the sheets from the Working spreadsheet.
    */
-  const sheets = (await chandigarhSheet.googleApi.spreadsheets.get({
-    spreadsheetId: chandigarhSheet.sheetID,
-  }));
-
-  /**
-   * Grab the titles of all the sheets inside the Working spreadsheet.
-   */
-  const titles = sheets.data.sheets?.map((chandigarhSheet) => {
-    const title = chandigarhSheet.properties?.title || '';
-    if (title) {
-      return title;
-    }
-  });
+  const titles = await chandigarhSheet.getSheetNames();
 
   /**
    * Parse the urls from each sheet and append them to the existingData map.
@@ -41,7 +27,7 @@ const readUrlsFromWorkingSheet = async (sheetID: string = ChandigarhSheetID) => 
     if (!title) {
       continue;
     }
-    const readData: Map<string, URL[]> = await readSheet(client, ChandigarhSheetID, title, 'Link');
+    const readData: Map<string, URL[]> = await readSheet(client, chandigarhSheetID, title, 'Link');
 
     readData.forEach((value, key) => {
       if (existingData.has(key)) {
@@ -54,18 +40,18 @@ const readUrlsFromWorkingSheet = async (sheetID: string = ChandigarhSheetID) => 
   return existingData;
 };
 
-const readRejectedUrls = async (sheetID: string = AutomationSheetID) => {
+const readRejectedUrls = async (sheetId: string) => {
   const client = await getClient();
 
-  const existingData = await readSheet(client, sheetID, 'Rejected Urls', 'href');
+  const existingData = await readSheet(client, sheetId, 'Rejected Urls', 'href');
 
   return existingData;
 };
 
-const readAlreadyAddedAutomationUrls = async (sheetID: string = AutomationSheetID) => {
+const readAlreadyAddedAutomationUrls = async (sheetId: string) => {
   const client = await getClient();
 
-  const existingData = await readSheet(client, sheetID, 'New Urls', 'href');
+  const existingData = await readSheet(client, sheetId, 'New Urls', 'href');
 
   return existingData;
 };
@@ -98,7 +84,7 @@ const getUrlsFromSheet = async (auth: OAuth2Client, sheetId: string, tabName: st
   const chandigarhSheet = new SheetWrapper(sheetId, auth);
   const headerMap = await chandigarhSheet.getHeaderLookup(`P`, tabName);
 
-  const linkColumnOrdinal = headerMap.get(urlColumnName);
+  const linkColumnOrdinal = headerMap[linkcolumnName];
 
   if (linkColumnOrdinal === null || linkColumnOrdinal === undefined) throw new Error(`Cannot find ${urlColumnName} column, did the name change?`);
 

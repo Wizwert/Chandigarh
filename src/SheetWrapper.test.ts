@@ -1,6 +1,7 @@
 import SheetWrapper from './SheetWrapper';
 import {OAuth2Client} from 'google-auth-library';
 import {sheets_v4 as sheetsV4} from 'googleapis/build/src/apis/sheets/v4';
+import 'jest-extended';
 
 type mockSheet = sheetsV4.Sheets & { setMockValue: (value: any) => void}
 
@@ -101,5 +102,48 @@ describe('SheetWrapper', () => {
 
       expect(sheetWrapper.getHeaderLookup('N', '')).resolves.toBe<Map<string, number>>(expectedResult);
     });
+  });
+  test('transforms input', () => {
+    // input
+    const headerMap = {'columnA': 0, 'columnB': 1};
+
+    const data = [
+      'Just a string',
+      ['This row has more values', 123, new Date()],
+      {columnB: 123, columnA: 'ABC'},
+      {columnB: 123, columnA: 'ABC', extraField: 'haha'},
+    ];
+
+    const expectedOutput = [
+      ['Just a string'],
+      ['This row has more values', 123, new Date()],
+      ['ABC', 123],
+      ['ABC', 123, 'haha'],
+    ];
+
+    const sheetWrapper = new SheetWrapper('test', new OAuth2Client());
+    const actualData = sheetWrapper.normalizeInput(data, headerMap);
+    console.log(actualData);
+    expect(actualData.length).toBe(expectedOutput.length);
+    expect(actualData).toIncludeSameMembers(expectedOutput);
+  });
+
+  test('No extra columns', () => {
+    // input
+    const headerMap = {'columnA': 0, 'columnB': 1};
+
+    const data = [
+      {columnB: 123, columnA: 'ABC'},
+    ];
+
+    const expectedOutput = [
+      ['ABC', 123],
+    ];
+
+    const sheetWrapper = new SheetWrapper('test', new OAuth2Client());
+    const actualData = sheetWrapper.normalizeInput(data, headerMap);
+    console.log(actualData);
+    expect(actualData.length).toBe(expectedOutput.length);
+    expect(actualData).toIncludeSameMembers(expectedOutput);
   });
 });

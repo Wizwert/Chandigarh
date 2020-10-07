@@ -27,6 +27,9 @@
   "bin": {
     "chdg": "./dist/cli/index.js"
   },
+  "jest": {
+    "setupFilesAfterEnv": ["jest-extended"]
+  },
   "homepage": "https://github.com/Wizwert/Chandigarh#readme",
   "dependencies": {
     "bufferutil": "^4.0.1",
@@ -59,7 +62,8 @@
     "gulp-eslint": "^6.0.0",
     "gulp-sourcemaps": "^2.6.5",
     "gulp-typescript": "^6.0.0-alpha.1",
-    "jest": "^26.6.3",
+    "jest": "^26.4.2",
+    "jest-extended": "^0.11.5",
     "merge2": "^1.4.1",
     "npm": "^6.14.8",
     "rimraf": "^3.0.2",

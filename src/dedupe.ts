@@ -1,12 +1,12 @@
 import {readUrls, getUrlIndexMap} from './readUrls';
 import {getNewUrlsFromManySources} from './getNewUrls';
-import {AutomationSheetID} from './constants';
-import SheetWrapper from './SheetWrapper';
-import {getClient} from './tokenUtil';
-import {findIndex} from 'lodash';
+import {writeURL} from './writeUrl';
+import {automationSheetID, testSheetID} from './constants';
 
 const dedupe = async (isTest: boolean) => {
+  const sheetId = isTest ? testSheetID : automationSheetID;
   const workingUrls = await readUrls();
+  const writtenUrls = await readAlreadyAddedAutomationUrls(sheetId);
 
   const auth = await getClient();
 

@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
 import program from 'commander';
-import {readUrls, gatherUrls, dedupe} from '../index';
+import {readUrls, crawl, dedupe} from '../index';
+import {writeURL} from '../writeUrl';
+import testData from './testData';
 
 program.version('0.0.1')
     .command('read')
@@ -10,18 +12,23 @@ program.version('0.0.1')
       readUrls();
     });
 
-program.command('search')
-    // .requiredOption('-s, --site <site>', 'site to search')
-    // .requiredOption('-t, --term <term>', 'The term to search for on the site', 'chandigarh')
-    .action(() => {
-      gatherUrls();
+program.command('crawl')
+    .option('-p, --prod', 'write to prod sheet')
+    .action(async (args) => {
+      const isWriteToProd = args.prod as boolean;
+      console.log(isWriteToProd);
+      await crawl(!isWriteToProd);
     });
 
 program.command('dedupe')
-    .option('-t, --test', 'Do not actually clear records from spreadsheet')
-    // .requiredOption('-t, --term <term>', 'The term to search for on the site', 'chandigarh')
-    .action(async (options) => {
-      await dedupe(options.test);
+    .option('-p, --prod', 'write to prod sheet')
+    .action(async (args) => {
+      const isWriteToProd = args.prod as boolean;
+      await dedupe(!isWriteToProd);
     });
 
+program.command('scratch')
+    .action(async (args) => {
+      // await writeURL(testData, '1NCz7EIbJK0MoM9Ehj57pLJZjTR7l2gBLK1dY_Lcx3DY', '06/10/2020', true);
+    });
 program.parse(process.argv);
