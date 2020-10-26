@@ -1,5 +1,5 @@
 import {getClient} from './tokenUtil';
-import {AutomationSheetID} from './constants';
+import {automationSheetID} from './constants';
 import SheetWrapper from './SheetWrapper';
 
 interface ILog {
@@ -17,7 +17,7 @@ const writeLog = async (message: string) => {
   try {
     const client = await getClient();
 
-    const logSheetWrapper = new SheetWrapper(AutomationSheetID, client);
+    const logSheetWrapper = new SheetWrapper(automationSheetID, client);
 
     logSheetWrapper.write([log], 'B', 'Logs');
     console.log(`[${log.DateTime}] ${log.Message}`);
