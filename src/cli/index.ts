@@ -18,10 +18,10 @@ program.command('search')
     });
 
 program.command('dedupe')
-    // .requiredOption('-s, --site <site>', 'site to search')
+    .option('-t, --test', 'Do not actually clear records from spreadsheet')
     // .requiredOption('-t, --term <term>', 'The term to search for on the site', 'chandigarh')
-    .action(async () => {
-      await dedupe();
+    .action(async (options) => {
+      await dedupe(options.test);
     });
 
 program.parse(process.argv);
