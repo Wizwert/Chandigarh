@@ -30,7 +30,7 @@
   "homepage": "https://github.com/Wizwert/Chandigarh#readme",
   "dependencies": {
     "bufferutil": "^4.0.3",
-    "commander": "^6.1.0",
+    "commander": "^7.0.0",
     "googleapis": "^67.0.0",
     "lodash": "^4.17.20",
     "puppeteer": "^5.5.0",
