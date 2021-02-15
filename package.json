@@ -33,7 +33,7 @@
     "commander": "^6.1.0",
     "googleapis": "^67.0.0",
     "lodash": "^4.17.20",
-    "puppeteer": "^5.5.0",
+    "puppeteer": "^7.1.0",
     "puppeteer-google-scraper": "^1.0.0",
     "utf-8-validate": "^5.0.4"
   },
