@@ -31,7 +31,7 @@
   "dependencies": {
     "bufferutil": "^4.0.3",
     "commander": "^6.1.0",
-    "googleapis": "^67.0.0",
+    "googleapis": "^68.0.0",
     "lodash": "^4.17.20",
     "puppeteer": "^8.0.0",
     "puppeteer-google-scraper": "^1.0.0",
