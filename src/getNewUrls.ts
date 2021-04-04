@@ -1,18 +1,9 @@
-import {find, uniqBy, every} from 'lodash';
+import {find, every} from 'lodash';
+import { IUrlLookup, mergeUrlLookups } from './crawl/readUrls';
 
-const localizationRegex = /\/[A-z][A-z]\//;
-interface IUrlCompareResult {
-  url: URL,
-  isNew: boolean,
-  urlsConsidered: URL[]
-}
-
-const areUrlsMatchy = (left: URL, right: URL) : boolean => {
-  if (!areHostsMatchy(left, right)) {
-    return false;
-  }
-
-  if (left.pathname === right.pathname) {
+const isNewURL = (existingUrls: IUrlLookup, potentialNewUrl: URL): boolean => {
+  const hostName = potentialNewUrl.hostname;
+  if (!existingUrls.has(hostName)) {
     return true;
   }
 
@@ -165,34 +156,14 @@ const getNewUrls = (existingUrls: Map<string, URL[]>, foundUrls: URL[]): URL[] =
   return getNewUrlsFromManySources(foundUrls, existingUrls);
 };
 
-const getCleanHost = (host: string) : string => {
-  const split = host.toLowerCase().split('.');
-  return `${split[split.length - 2]}.${split[split.length - 1]}`;
+const isNewURLAcrossManySources = (potentialNewUrl: URL, existingUrls: IUrlLookup) : boolean => {
+
+  return every(existingUrls, (urlMap) => isNewURL(urlMap, potentialNewUrl));
 };
 
-const getNewUrlsFromManySources = (foundUrls: URL[], ...existingUrls: Map<string, URL[]>[]): URL[] => {
-  const mergedMap = new Map<string, URL[]>();
-  existingUrls.forEach((map) => {
-    const keys = [...map.keys()];
-    keys.forEach((k) => {
-      const cleanKey = getCleanHost(k);
-
-      const urls = [
-        ...(mergedMap.get(cleanKey) || []),
-        ...(map.get(k) || []),
-        ...(map.get(cleanKey) || []),
-      ];
-      const uniqUrls = uniqBy(urls, (u) => u.href);
-
-      mergedMap.set(cleanKey, uniqUrls);
-    });
-  });
-
-  const filterResults = foundUrls.map((u) => isNewURL(mergedMap, u));
-
-  const newResults = filterResults.filter((r) => r.isNew);
-
-  return newResults.map((r) => r.url);
+const getNewUrlsFromManySources = (foundUrls: URL[], ...existingUrls: IUrlLookup[]): URL[] => {
+  const lookup = mergeUrlLookups(...existingUrls);
+  return foundUrls.filter((u) => isNewURLAcrossManySources(u, lookup));
 };
 
 export {getNewUrls, getNewUrlsFromManySources, isUrlContainedInList, areUrlsMatchy, getCleanHost};

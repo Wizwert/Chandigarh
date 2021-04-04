@@ -4,6 +4,7 @@ import program from 'commander';
 import {readUrls, crawl, dedupe} from '../index';
 import {writeURL} from '../writeUrl';
 import testData from './testData';
+import inquirer from 'inquirer';
 
 program.version('0.0.1')
     .command('read')

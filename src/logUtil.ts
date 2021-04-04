@@ -7,6 +7,8 @@ interface ILog {
   Message: string;
 }
 
+export type logWriter = (sheetId: string, message: string) => Promise<void>;
+
 const writeLog = async (sheetId: string, message: string) => {
   const now = new Date();
   const log: ILog = {

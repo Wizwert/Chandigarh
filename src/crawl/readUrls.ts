@@ -1,10 +1,31 @@
 import {OAuth2Client} from 'google-auth-library';
-import {chandigarhSheetID} from './constants';
-import SheetWrapper from './SheetWrapper';
-import {getClient} from './tokenUtil';
-import {reject} from 'lodash';
+import {chandigarhSheetID} from '../constants';
+import SheetWrapper from '../SheetWrapper';
+import {getClient} from '../tokenUtil';
+import {groupBy} from 'lodash';
 
-const readUrlsFromWorkingSheet = async (sheetID: string = ChandigarhSheetID) => {
+export interface IUrlLookup {
+  [T: string]: URL[]
+}
+
+const mergeUrlLookups = (...lookups: IUrlLookup[]): IUrlLookup => {
+  if (lookups.length === 0) {
+    return {};
+  }
+
+  const startingPoint: IUrlLookup = {...lookups[0]};
+
+  for (let i = 1; i < lookups.length; i++) {
+    const lookup = lookups[i];
+    Object.keys(lookups).forEach((key) => {
+      startingPoint[key] = [...startingPoint[key], ...lookup[key]];
+    });
+  }
+
+  return startingPoint;
+};
+
+const readUrlsFromWorkingSheet = async (): Promise<IUrlLookup> => {
   const client = await getClient();
 
   const chandigarhSheet = new SheetWrapper(chandigarhSheetID, client);
@@ -17,7 +38,7 @@ const readUrlsFromWorkingSheet = async (sheetID: string = ChandigarhSheetID) => 
   /**
    * Parse the urls from each sheet and append them to the existingData map.
    */
-  const existingData = new Map<string, URL[]>();
+  const existingData: IUrlLookup = {};
   if (!titles) {
     return existingData;
   };
@@ -27,20 +48,16 @@ const readUrlsFromWorkingSheet = async (sheetID: string = ChandigarhSheetID) => 
     if (!title) {
       continue;
     }
-    const readData: Map<string, URL[]> = await readSheet(client, chandigarhSheetID, title, 'Link');
+    const readData: IUrlLookup = await readSheet(client, chandigarhSheetID, title, 'Link');
 
-    readData.forEach((value, key) => {
-      if (existingData.has(key)) {
-        existingData.set(key, [...value, ...(existingData.get(key) || [])]);
-      } else {
-        existingData.set(key, value);
-      }
+    Object.keys(readData).forEach((key) => {
+      existingData[key] = [...existingData[key], ...readData[key]];
     });
   };
   return existingData;
 };
 
-const readRejectedUrls = async (sheetId: string) => {
+const readRejectedUrls = async (sheetId: string): Promise<IUrlLookup> => {
   const client = await getClient();
 
   const existingData = await readSheet(client, sheetId, 'Rejected Urls', 'href');
@@ -48,7 +65,7 @@ const readRejectedUrls = async (sheetId: string) => {
   return existingData;
 };
 
-const readAlreadyAddedAutomationUrls = async (sheetId: string) => {
+const readAlreadyAddedAutomationUrls = async (sheetId: string): Promise<IUrlLookup> => {
   const client = await getClient();
 
   const existingData = await readSheet(client, sheetId, 'New Urls', 'href');
@@ -56,7 +73,7 @@ const readAlreadyAddedAutomationUrls = async (sheetId: string) => {
   return existingData;
 };
 
-const getUrlIndexMap = async (auth: OAuth2Client, sheetId: string, tabName: string) => {
+const readSheet = async (auth: OAuth2Client, sheetId: string, tabName: string, linkcolumnName: string) : Promise<IUrlLookup> => {
   const chandigarhSheet = new SheetWrapper(sheetId, auth);
   const rows = await chandigarhSheet.read(`'${tabName}'!A:A`);
   const urlMap = new Map<URL, number>();
@@ -95,20 +112,6 @@ const getUrlsFromSheet = async (auth: OAuth2Client, sheetId: string, tabName: st
   return urls;
 };
 
-const groupBy = <TList, TKey>(list: TList[], keyGetter: (x: TList) => TKey) : Map<TKey, TList[]> => {
-  const map = new Map<TKey, TList[]>();
-  list.forEach((item) => {
-    const key = keyGetter(item);
-    const collection = map.get(key);
-    if (!collection) {
-      map.set(key, [item]);
-    } else {
-      collection.push(item);
-    }
-  });
-  return map;
-};
-
 const getCleanUrls = (rows: any[][], linkColumnOrdinal: number) : URL[] => {
   const urls = rows.map((r) => {
     try {
@@ -121,4 +124,4 @@ const getCleanUrls = (rows: any[][], linkColumnOrdinal: number) : URL[] => {
 };
 
 
-export {readUrlsFromWorkingSheet as readUrls, getCleanUrls, readRejectedUrls, readAlreadyAddedAutomationUrls, getUrlIndexMap};
+export {readUrlsFromWorkingSheet as readUrls, getCleanUrls, readRejectedUrls, readAlreadyAddedAutomationUrls, mergeUrlLookups};
