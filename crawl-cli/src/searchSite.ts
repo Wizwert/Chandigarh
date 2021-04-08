@@ -24,7 +24,7 @@ const searchSite = async (query: string, timeframe: string = '6m', writeLog: (me
     }
     writeLog(`Running Query. Start At: [${start}] Total: [${total}]`)
     result = await runSearch(search, start, query, timeframe);
-    console.log('search info', result.searchInformation);
+    
     total = result.searchInformation?.totalResults && parseInt(result.searchInformation?.totalResults || "0") || 0;
 
     const resultUrls = getResults(result);
