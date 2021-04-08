@@ -1,4 +1,4 @@
-import {readUrls} from './crawl/readUrls';
+import {readUrls, readAlreadyAddedAutomationUrls} from './crawl/readUrls';
 import {getNewUrlsFromManySources} from './getNewUrls';
 import {writeURL} from './writeUrl';
 import {automationSheetID, testSheetID} from './constants';
@@ -11,7 +11,7 @@ const dedupe = async (isTest: boolean) => {
 
   // const auth = await getClient();
 
-  // const urlMap = await getUrlIndexMap(auth, AutomationSheetID, 'New Urls');
+  // const urlMap = await getUrlIndexMap(auth, automationSheetID, 'New Urls');
 
   // const urls: URL[] = [...urlMap.keys()];
 

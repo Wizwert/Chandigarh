@@ -2,14 +2,13 @@ import { google } from 'googleapis';
 import { customsearch_v1 } from 'googleapis/build/src/apis/customsearch/v1';
 import { IImageCell } from './SheetWrapper';
 
+import { CSE_Search_ID, CSE_Token, CSE_api_key } from '../google_api_tokens';
+
 export interface ISearchResult {
   snippet: string,
   url: URL,
   image: IImageCell
 }
-
-const CSE_Token = "AIzaSyBFy8vKPTeW5gYEgASSZa_MW-6LH8I47jo";
-const CSE_Search_ID = "8dadda9d650932c1b";
 
 const searchSite = async (query: string, timeframe: string = '6m', writeLog: (message: string) => void = (msg) => console.log(msg)): Promise<ISearchResult[]> => {
   const search = google.customsearch("v1");
@@ -77,7 +76,7 @@ const runSearch = async (search: customsearch_v1.Customsearch, start: number = 0
       lr: 'lang_en',
       start: start,
       q: query,
-      key: "AIzaSyBRQ30Rhb6-jfFeW209lwf7qnvg2vfYW3I",
+      key: CSE_api_key,
     }).then(x => resolve(x.data)).catch(x => console.log(x));
   })
 }
