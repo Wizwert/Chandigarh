@@ -81,7 +81,7 @@ function buildAndWatch(cb: (error?: any) => void) {
 
   watch(['src/**/*.tsx', 'src/**/*.ts'], (cb) =>{
     gulp.src(['src/**/*.tsx', 'src/**/*.ts'])
-        .pipe(eslint())
+        // .pipe(eslint())
         .pipe(eslint.formatEach('compact'))
         .pipe(tsProject())
         .pipe(gulp.dest(dir));
@@ -96,7 +96,7 @@ function clearDirectory(cb: (error?: any) => void) {
 
 
 const bootstrap = series(install, runCompile);
-const build = series(clearDirectory, parallel(lint, runCompile));
+const build = series(clearDirectory, runCompile);
 
 const watchFiles = series(build, buildAndWatch);
 

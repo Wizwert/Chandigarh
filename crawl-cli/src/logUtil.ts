@@ -21,7 +21,7 @@ const writeLog = async (sheetId: string, message: string) => {
 
     const logSheetWrapper = new SheetWrapper(sheetId, client);
 
-    logSheetWrapper.write([log], 'B', 'Logs');
+    // logSheetWrapper.write([log], 'B', 'Logs');
     console.log(`[${log.DateTime}] ${log.Message}`);
   } catch (error) {
     console.error('Encountered error while logging', error);

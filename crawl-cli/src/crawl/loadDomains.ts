@@ -1,4 +1,5 @@
-import {logWriter} from '../logUtil';
+import { logWriter } from '../logUtil';
+import { readUrls, readRejectedUrls, readAlreadyAddedAutomationUrls } from "./readUrls";
 
 export default async (sheetId: string, logger: logWriter) => {
   logger(sheetId, 'Loading Urls from master file');
@@ -7,4 +8,8 @@ export default async (sheetId: string, logger: logWriter) => {
   const rejectedUrls = await readRejectedUrls(sheetId);
   logger(sheetId, 'Loading Urls from Automation Sheet');
   const alreadyAddedUrls = await readAlreadyAddedAutomationUrls(sheetId);
+
+  const domains = [...existingData, ...rejectedUrls, ...alreadyAddedUrls]
+
+  return domains;
 };

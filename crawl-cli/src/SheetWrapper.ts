@@ -2,10 +2,20 @@
 import {google} from 'googleapis';
 import {OAuth2Client} from 'google-auth-library';
 import {sheets_v4} from 'googleapis/build/src/apis/sheets/v4';
-import {without, isArray, isString} from 'lodash';
+import {without, isArray, isString, maxBy} from 'lodash';
 
 interface IDictionary<T> {
   [key: string]: T;
+}
+
+export interface IImageCell {
+  src: string,
+  height: string,
+  width: string
+}
+
+export const isImageCell = (arg: any): arg is IImageCell => {
+  return arg && arg.src !== null && typeof(arg.src) === 'string';
 }
 
 /**
@@ -71,24 +81,75 @@ class SheetWrapper {
   async write(data: any[], maxColumn: string, tabName?: string, isDebug: boolean = false): Promise<number> {
     const headerMap = await this.getHeaderLookup(maxColumn, tabName);
     if (isDebug) {
-      console.log('Raw Data', data.slice(0, Math.min(5, data.length)));
+      console.log('Raw Data', JSON.stringify(data.slice(0, Math.min(5, data.length))));
     }
     const rows = this.normalizeInput(data, headerMap);
     if (isDebug) {
-      console.log('Normalized Data', rows.slice(0, Math.min(5, rows.length)));
+      console.log('Normalized Data', JSON.stringify(rows.slice(0, Math.min(5, rows.length))));
     }
     const tabNamePrefix = tabName ? `'${tabName}'!` : '';
-
+    
     const response = await this.googleApi.spreadsheets.values.append({
       spreadsheetId: this.sheetID,
-      range: `${tabNamePrefix}A1:${maxColumn}`,
+      range: `${tabNamePrefix}A1:${maxColumn}`,      
       valueInputOption: 'USER_ENTERED',
-      includeValuesInResponse: isDebug,
+      includeValuesInResponse: true,
       requestBody: {
         majorDimension: 'ROWS',
         values: rows,
       },
     });
+
+    // const requests: sheets_v4.Schema$Request[] = []
+    
+    // const columnRequest : sheets_v4.Schema$Request = {
+    //   updateDimensionProperties: {
+    //     range: {
+    //       sheetId: parseInt(this.sheetID),
+    //       dimension: "COLUMNS",
+    //       startIndex: headerMap["image"],
+    //       endIndex: headerMap["image"]
+    //     },
+    //     fields: 'pixelSize',
+    //     properties: {
+    //       pixelSize: maxBy(data, x => x.image? parseInt(x.image.width) : 0)
+    //     }
+    //   }
+    // }    
+    // requests.push(columnRequest);
+
+    // for (let index = 0; index < data.length; index++) {
+    //   const element = data[index];
+    //   if(!element.image || !element.image.height || element.image.height === ''){
+    //     continue
+    //   };
+
+    //   const rowRequest : sheets_v4.Schema$Request = {
+    //     updateDimensionProperties: {
+    //       range: {
+    //         sheetId: parseInt(this.sheetID),
+    //         dimension: "ROWS",
+    //         startIndex: index + 1,
+    //         endIndex: index + 1
+    //       },
+    //       fields: 'pixelSize',
+    //       properties: {
+    //         pixelSize: parseInt(element.image.height)
+    //       }
+    //     }
+    //   }
+
+    //   requests.push(rowRequest);
+    // }
+
+    // const request: sheets_v4.Schema$BatchUpdateSpreadsheetRequest = {
+    //   requests
+    // }
+    // const rowOperations = await this.googleApi.spreadsheets.batchUpdate({
+    //   spreadsheetId: this.sheetID,
+    //   requestBody: request
+    // })
+
     if (isDebug) {
       console.log(response.data.updates);
       console.log(response.data.tableRange);
@@ -113,8 +174,18 @@ class SheetWrapper {
       const row: any[] = [];
 
       headerColumns.forEach((columnHeader) => {
-        const rowValue = d[columnHeader];
-        row[headerMap[columnHeader]] = rowValue;
+        const columnValue = d[columnHeader];
+        if(isImageCell(columnValue)){
+          if(columnValue.height && columnValue.width){
+            row[headerMap[columnHeader]] = `=IMAGE("${columnValue.src}", 4, ${columnValue.height}, ${columnValue.width})`;  
+          }else{
+            row[headerMap[columnHeader]] = `=IMAGE("${columnValue.src}")`;  
+          }
+          
+        }else{
+          row[headerMap[columnHeader]] = columnValue;
+        }
+        
       });
 
       const keysWithoutHeaderValue = without(Object.keys(d), ...headerColumns);

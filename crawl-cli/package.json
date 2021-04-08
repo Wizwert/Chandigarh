@@ -37,11 +37,13 @@
     "@types/inquirer": "^7.3.1",
     "bufferutil": "^4.0.1",
     "commander": "^6.1.0",
+    "console-png": "^1.2.1",
+    "google-search-scraper": "^0.1.0",
     "googleapis": "^60.0.1",
     "inquirer": "^7.3.3",
     "lodash": "^4.17.20",
+    "postcss": "^8.2.9",
     "puppeteer": "^5.5.0",
-    "puppeteer-google-scraper": "^1.0.0",
     "utf-8-validate": "^5.0.2"
   },
   "devDependencies": {

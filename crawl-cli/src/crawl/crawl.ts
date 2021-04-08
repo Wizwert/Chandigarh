@@ -1,36 +1,31 @@
-import {readUrls, readRejectedUrls, readAlreadyAddedAutomationUrls} from './readUrls';
-import {searchSite} from '../searchSite';
-import {getNewUrlsFromManySources} from '../getNewUrls';
-import {writeURL} from '../writeUrl';
-import {writeLog} from '../LogUtil';
-import {difference} from 'lodash';
-import {domainsToInclude} from '../constants';
+import { readUrls, readRejectedUrls, readAlreadyAddedAutomationUrls, UrlLookup } from './readUrls';
+import { searchSite } from '../searchSite';
+import { getNewUrlsFromManySources, mergeExistingUrls } from '../getNewUrls';
+import { writeURL } from '../writeUrl';
+import { writeLog } from '../LogUtil';
 import SheetWrapper from '../SheetWrapper';
-import {getClient} from '../tokenUtil';
+import { getClient } from '../tokenUtil';
 import getSheetId from './getSheetId';
-import {IUrlLookup, mergeUrlLookups} from './readUrls';
+import { IUrlLookup } from './readUrls';
+import { ISearchResult } from '../searchSite';
 
-const crawl = async (isTest: boolean = false) => {
+const crawl = async (isTest: boolean = false, timeframe: string) => {
   console.log('Is running in test mode: ', isTest);
   const sheetId = await getSheetId(writeLog, isTest);
   try {
-    const tabName = await createTabForResults(sheetId);
+    const tabName = 'URL Automation' //await createTabForResults(sheetId);
     writeLog(sheetId, `Created tab for results. Tab Name: [${tabName}]`);
     writeLog(sheetId, 'Loading Urls from master file');
-    const existingData = await readUrls();
+    const validatedUrls = await readUrls();
     writeLog(sheetId, 'Loading Urls from Rejected Tab');
     const rejectedUrls = await readRejectedUrls(sheetId);
     writeLog(sheetId, 'Loading Urls from Automation Sheet');
     const alreadyAddedUrls = await readAlreadyAddedAutomationUrls(sheetId);
 
-    // const domains = mergeUrlLookups(existingData, domainsToInclude);
-    // const newDomains = difference(domains, ...Object.keys(alreadyAddedUrls));
-    // const olderDomains = difference(domains, newDomains);
+    const allExisting = mergeExistingUrls(validatedUrls, rejectedUrls, alreadyAddedUrls);
+    const formattedDate = getFormattedDate();
 
-    // // Start with domains that have never been in the sheet, so if processing errors we get the
-    // // most bang for our buck
-    // const urlsFromNewDomains = await findNewUrlsForDomains(newDomains, sheetId, tabName, existingData, rejectedUrls, alreadyAddedUrls);
-    // const urlsFromOlderDomains = await findNewUrlsForDomains(olderDomains, sheetId, tabName, existingData, rejectedUrls, alreadyAddedUrls);
+    await findNewUrlsForDomains(validatedUrls, sheetId, tabName, allExisting, formattedDate, timeframe);
   } catch (error) {
     writeLog(sheetId, `Error when processing. Error: [${error}]`);
   }
@@ -38,25 +33,27 @@ const crawl = async (isTest: boolean = false) => {
   writeLog(sheetId, 'Finished Crawling');
 };
 
-const findNewUrlsForDomains = async (domains: string[], sheetId: string, tabName: string, ...existingUrls: IUrlLookup): Promise<URL[]> => {
-  const urls: URL[] = [];
-  for (let i = 0; i < domains.length; i++) {
-    const domain = domains[i];
+const findNewUrlsForDomains = async (validatedUrls: IUrlLookup, sheetId: string, tabName: string, existingUrls: IUrlLookup, formattedDate: string, timeframe: string): Promise<ISearchResult[]> => {
+  const urls: ISearchResult[] = [];
+  for (let domain in validatedUrls) {
     try {
       const searchTerm = `site:${domain} Chandigarh`;
       await writeLog(sheetId, `Starting search for [${domain}]`);
 
-      const urls = await searchSite(searchTerm);
-
-      const newUrls: URL[] = getNewUrlsFromManySources(urls, ...existingUrls);
+      const urls = await searchSite(searchTerm, timeframe, (msg) => writeLog(sheetId, msg));
+      
+      const newUrls = getNewUrlsFromManySources(urls, existingUrls);
       urls.push(...newUrls);
       await writeLog(sheetId, `Found [${newUrls.length}] for [${domain}]`);
 
-      await writeURL(newUrls, sheetId, tabName);
-
-      if (i !== domains.length - 1) {
-        await sleep(Math.floor(10000 + Math.random() * 20000));
+      if(newUrls.length === 0){ 
+        continue;
       }
+
+      await writeURL(newUrls, sheetId, formattedDate, tabName);
+
+      await writeLog(sheetId, `Wrote URLS for [${domain}]`);
+
     } catch (error) {
       writeLog(sheetId, `Error when processing [${domain}]. Error: [${error}]`);
     }
@@ -88,4 +85,4 @@ const sleep = async (milliseconds: number) => {
   });
 };
 
-export {crawl};
+export { crawl };
