@@ -2,12 +2,9 @@
 
 import program from 'commander';
 import {readUrls, crawl, dedupe} from '../index';
-import {writeURL} from '../writeUrl';
-import testData from './testData';
-import inquirer from 'inquirer';
 import {searchSite} from '../searchSite';
-import SheetWrapper from '../SheetWrapper';
-import {OAuth2Client} from 'google-auth-library';
+require('dotenv').config();
+import {ChdgDiscordReporter} from 'chdg-discord-reporter';
 
 program.version('0.0.1')
     .command('read')
@@ -45,7 +42,9 @@ program.command('search')
 
 program.command('scratch')
     .action(async (args) => {
-
+      const client = new ChdgDiscordReporter();
+      await client.announce('This is an announcement')
+      // client.close();
       // await writeURL(testData, '1NCz7EIbJK0MoM9Ehj57pLJZjTR7l2gBLK1dY_Lcx3DY', '06/10/2020', true);
     });
 program.parse(process.argv);

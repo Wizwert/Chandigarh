@@ -3,6 +3,6 @@ import { automationSheetID, testSheetID } from '../constants';
 
 export default async (logWriter: logWriter, isTest: boolean = false): Promise<string> => {
   const sheetId = isTest ? testSheetID : automationSheetID;
-  await logWriter(sheetId, 'Starting to Crawl');
+  await logWriter(`Starting to Crawl ${sheetId}`);
   return sheetId;
 };

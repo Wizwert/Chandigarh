@@ -2,8 +2,6 @@ import { google } from 'googleapis';
 import { customsearch_v1 } from 'googleapis/build/src/apis/customsearch/v1';
 import { IImageCell } from './SheetWrapper';
 
-import { CSE_Search_ID, CSE_Token, CSE_api_key } from '../google_api_tokens';
-
 export interface ISearchResult {
   snippet: string,
   url: URL,
@@ -70,13 +68,13 @@ const getResults = (result: customsearch_v1.Schema$Search): ISearchResult[] => {
 const runSearch = async (search: customsearch_v1.Customsearch, start: number = 0, query: string, timeframe: string): Promise<customsearch_v1.Schema$Search> => {
   return new Promise<customsearch_v1.Schema$Search>((resolve, reject) => {
     search.cse.siterestrict.list({
-      access_token: CSE_Token,
-      cx: CSE_Search_ID,
+      access_token: process.env.CSE_Token,
+      cx: process.env.CSE_Search_ID,
       num: 10,
       lr: 'lang_en',
       start: start,
       q: query,
-      key: CSE_api_key,
+      key: process.env.CSE_api_key,
     }).then(x => resolve(x.data)).catch(x => console.log(x));
   })
 }

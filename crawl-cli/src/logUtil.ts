@@ -1,15 +1,14 @@
-import {getClient} from './tokenUtil';
-import {automationSheetID} from './constants';
-import SheetWrapper from './SheetWrapper';
+import { ChdgDiscordReporter } from 'chdg-discord-reporter';
 
 interface ILog {
   DateTime: string;
   Message: string;
 }
 
-export type logWriter = (sheetId: string, message: string) => Promise<void>;
+export type logWriter = (message: string) => Promise<void>;
 
-const writeLog = async (sheetId: string, message: string) => {
+const writeLog = async (message: string) => {
+  const reporter = new ChdgDiscordReporter();
   const now = new Date();
   const log: ILog = {
     DateTime: `${now.getFullYear()}-${now.getMonth()}-${now.getDay()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}.${now.getMilliseconds()}`,
@@ -17,15 +16,21 @@ const writeLog = async (sheetId: string, message: string) => {
   };
 
   try {
-    const client = await getClient();
-
-    const logSheetWrapper = new SheetWrapper(sheetId, client);
-
-    // logSheetWrapper.write([log], 'B', 'Logs');
+    reporter.log(`[${log.DateTime}] ${log.Message}`);
     console.log(`[${log.DateTime}] ${log.Message}`);
   } catch (error) {
     console.error('Encountered error while logging', error);
   }
 };
 
-export {writeLog};
+const announce = async (message: string) => {
+  const reporter = new ChdgDiscordReporter();
+  try {
+    reporter.announce(message);
+    console.log(message);
+  } catch (error) {
+    console.error('Encountered error while logging', error);
+  }
+}
+
+export {writeLog, announce};

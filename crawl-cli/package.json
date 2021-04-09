@@ -4,7 +4,8 @@
   "description": "A collection of Scripts for Data Mining Related to Chandigarh furniture",
   "main": "index.js",
   "scripts": {
-    "build": "gulp build",
+    "build": "tsc --pretty",
+    "watch": "tsc -w --pretty",
     "test": "jest",
     "cover": "jest --coverage"
   },
@@ -35,9 +36,13 @@
   "homepage": "https://github.com/Wizwert/Chandigarh#readme",
   "dependencies": {
     "@types/inquirer": "^7.3.1",
+    "ascii-table": "^0.0.9",
     "bufferutil": "^4.0.1",
+    "byots": "^4.3.0-dev.20210326.17.17",
+    "chdg-discord-reporter": "file:..\\chdg-discord-reporter",
     "commander": "^6.1.0",
     "console-png": "^1.2.1",
+    "dotenv": "^8.2.0",
     "google-search-scraper": "^0.1.0",
     "googleapis": "^60.0.1",
     "inquirer": "^7.3.3",
@@ -75,6 +80,6 @@
     "rimraf": "^3.0.2",
     "ts-jest": "^26.4.4",
     "ts-node": "^9.0.0",
-    "typescript": "^4.0.3"
+    "typescript": "^4.3.0-dev.20210409"
   }
 }
