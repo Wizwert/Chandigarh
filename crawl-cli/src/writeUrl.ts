@@ -1,13 +1,17 @@
 import {getClient} from './tokenUtil';
 import SheetWrapper from './SheetWrapper';
-import {automationSheetID} from './constants';
+import { ISearchResult } from './searchSite';
 
-const writeURL = async (data: any[], tabName?: string, sheetID: string = AutomationSheetID) : Promise<void> => {
+const writeURL = async (data: ISearchResult[], sheetId: string, dateString: string, tabName?: string, isDebug: boolean = false) : Promise<void> => {
+  if(data.length === 0){
+    return;
+  }
+
   const client = await getClient();
 
-  const sheet = new SheetWrapper(sheetID, client);
-
-  sheet.write(data, 'N', tabName);
+  const sheet = new SheetWrapper(sheetId, client);
+  const urls = data.map((result) => ({ date: dateString, href: result.url.href, snippet: result.snippet, image: result.image}));
+  sheet.write(urls, 'N', tabName, isDebug);
 };
 
 export {writeURL};

@@ -27,44 +27,54 @@
   "bin": {
     "chdg": "./dist/cli/index.js"
   },
+  "jest": {
+    "setupFilesAfterEnv": [
+      "jest-extended"
+    ]
+  },
   "homepage": "https://github.com/Wizwert/Chandigarh#readme",
   "dependencies": {
-    "bufferutil": "^4.0.3",
-    "commander": "^7.2.0",
-    "googleapis": "^71.0.0",
-    "lodash": "^4.17.21",
-    "puppeteer": "^8.0.0",
-    "puppeteer-google-scraper": "^1.0.0",
-    "utf-8-validate": "^5.0.4"
+    "@types/inquirer": "^7.3.1",
+    "bufferutil": "^4.0.1",
+    "commander": "^6.1.0",
+    "console-png": "^1.2.1",
+    "google-search-scraper": "^0.1.0",
+    "googleapis": "^60.0.1",
+    "inquirer": "^7.3.3",
+    "lodash": "^4.17.20",
+    "postcss": "^8.2.9",
+    "puppeteer": "^5.5.0",
+    "utf-8-validate": "^5.0.2"
   },
   "devDependencies": {
-    "@types/gulp": "^4.0.8",
-    "@types/gulp-sourcemaps": "0.0.34",
-    "@types/jest": "^26.0.22",
-    "@types/lodash": "^4.14.168",
+    "@types/gulp": "^4.0.7",
+    "@types/gulp-sourcemaps": "0.0.32",
+    "@types/jest": "^26.0.20",
+    "@types/lodash": "^4.14.159",
     "@types/merge2": "^1.3.0",
-    "@types/puppeteer": "^5.4.3",
+    "@types/puppeteer": "^3.0.2",
     "@types/rimraf": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^4.0.0",
-    "@typescript-eslint/parser": "^3.10.1",
-    "eslint": "^7.23.0",
+    "@typescript-eslint/parser": "^3.9.1",
+    "eslint": "^7.17.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-config-standard": "^16.0.2",
+    "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.3.1",
+    "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^5.0.0",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
     "gulp-eslint": "^6.0.0",
-    "gulp-sourcemaps": "^3.0.0",
+    "gulp-sourcemaps": "^2.6.5",
     "gulp-typescript": "^6.0.0-alpha.1",
-    "jest": "^26.6.3",
+    "jest": "^26.4.2",
+    "jest-extended": "^0.11.5",
     "merge2": "^1.4.1",
-    "npm": "^7.9.0",
+    "npm": "^6.14.8",
     "rimraf": "^3.0.2",
-    "ts-jest": "^26.5.4",
-    "ts-node": "^9.1.1",
-    "typescript": "^4.2.4"
+    "ts-jest": "^26.4.4",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.3"
   }
 }

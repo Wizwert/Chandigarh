@@ -7,7 +7,9 @@ interface ILog {
   Message: string;
 }
 
-const writeLog = async (message: string) => {
+export type logWriter = (sheetId: string, message: string) => Promise<void>;
+
+const writeLog = async (sheetId: string, message: string) => {
   const now = new Date();
   const log: ILog = {
     DateTime: `${now.getFullYear()}-${now.getMonth()}-${now.getDay()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}.${now.getMilliseconds()}`,
@@ -17,9 +19,9 @@ const writeLog = async (message: string) => {
   try {
     const client = await getClient();
 
-    const logSheetWrapper = new SheetWrapper(automationSheetID, client);
+    const logSheetWrapper = new SheetWrapper(sheetId, client);
 
-    logSheetWrapper.write([log], 'B', 'Logs');
+    // logSheetWrapper.write([log], 'B', 'Logs');
     console.log(`[${log.DateTime}] ${log.Message}`);
   } catch (error) {
     console.error('Encountered error while logging', error);
