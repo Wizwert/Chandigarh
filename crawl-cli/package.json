@@ -40,7 +40,7 @@
     "console-png": "^1.2.1",
     "google-search-scraper": "^0.1.0",
     "googleapis": "^60.0.1",
-    "inquirer": "^7.3.3",
+    "inquirer": "^8.0.0",
     "lodash": "^4.17.21",
     "postcss": "^8.2.10",
     "puppeteer": "^5.5.0",
