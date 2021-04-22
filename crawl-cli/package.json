@@ -43,7 +43,7 @@
     "inquirer": "^8.0.0",
     "lodash": "^4.17.21",
     "postcss": "^8.2.10",
-    "puppeteer": "^5.5.0",
+    "puppeteer": "^9.0.0",
     "utf-8-validate": "^5.0.2"
   },
   "devDependencies": {
