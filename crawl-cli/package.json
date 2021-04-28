@@ -36,7 +36,7 @@
   "dependencies": {
     "@types/inquirer": "^7.3.1",
     "bufferutil": "^4.0.3",
-    "commander": "^6.1.0",
+    "commander": "^7.2.0",
     "console-png": "^1.2.1",
     "google-search-scraper": "^0.1.0",
     "googleapis": "^72.0.0",
