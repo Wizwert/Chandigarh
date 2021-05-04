@@ -44,7 +44,7 @@
     "lodash": "^4.17.21",
     "postcss": "^8.2.13",
     "puppeteer": "^9.0.0",
-    "utf-8-validate": "^5.0.4"
+    "utf-8-validate": "^5.0.5"
   },
   "devDependencies": {
     "@types/gulp": "^4.0.8",
