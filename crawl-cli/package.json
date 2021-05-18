@@ -55,7 +55,7 @@
     "@types/puppeteer": "^5.4.3",
     "@types/rimraf": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^4.23.0",
-    "@typescript-eslint/parser": "^4.23.0",
+    "@typescript-eslint/parser": "^4.24.0",
     "eslint": "^7.26.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-standard": "^15.0.1",
