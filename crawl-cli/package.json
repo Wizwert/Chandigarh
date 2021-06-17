@@ -42,7 +42,7 @@
     "googleapis": "^76.0.0",
     "inquirer": "^8.1.1",
     "lodash": "^4.17.21",
-    "postcss": "^8.3.4",
+    "postcss": "^8.3.5",
     "puppeteer": "^10.0.0",
     "utf-8-validate": "^5.0.5"
   },
