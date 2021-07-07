@@ -47,7 +47,7 @@
     "utf-8-validate": "^5.0.5"
   },
   "devDependencies": {
-    "@types/gulp": "^4.0.8",
+    "@types/gulp": "^4.0.9",
     "@types/gulp-sourcemaps": "0.0.34",
     "@types/jest": "^26.0.23",
     "@types/lodash": "^4.14.171",
