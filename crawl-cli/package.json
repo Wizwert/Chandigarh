@@ -34,7 +34,7 @@
   },
   "homepage": "https://github.com/Wizwert/Chandigarh#readme",
   "dependencies": {
-    "@types/inquirer": "^7.3.2",
+    "@types/inquirer": "^7.3.3",
     "bufferutil": "^4.0.3",
     "commander": "^8.0.0",
     "console-png": "^1.2.1",
