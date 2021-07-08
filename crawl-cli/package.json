@@ -39,7 +39,7 @@
     "commander": "^8.0.0",
     "console-png": "^1.2.1",
     "google-search-scraper": "^0.1.0",
-    "googleapis": "^80.1.0",
+    "googleapis": "^80.2.0",
     "inquirer": "^8.1.1",
     "lodash": "^4.17.21",
     "postcss": "^8.3.5",
